@@ -23,6 +23,8 @@ package core
 		public var shutters:Array;					// boolean array indicating shutter state (T:closed, F:open)
 		//public var shuttersStatus:Array;			// ??? array indicating shutter abnormalities
 		
+		public var lights:Array;
+		
 		/**
 		 * Game controller requires reference to containing ContainerGame
 		 *
@@ -34,12 +36,15 @@ package core
 			
 			// setup fuel
 			fuel = 100;
-			fuelDrainRate = 0.005;
+			fuelDrainRate = 0.007;
 			fuelDrainMultiplier = 1;
 			fuelDrainMultiplierLimit = 5;
 			
 			// setup shutters
 			shutters = [false, false];
+			
+			// setup lights
+			lights = [false, false];
 			
 			//cg.stage.addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		}
@@ -63,22 +68,39 @@ package core
 		
 		public function onShutter(e:MouseEvent):void
 		{
-			shutters[e.target.shutterInd] = !shutters[e.target.shutterInd];
+			shutters[e.target.ind] = !shutters[e.target.ind];
 			
-			var recolor:ColorTransform = new ColorTransform();
-			
-			if (shutters[e.target.shutterInd])
+			if (shutters[e.target.ind])
 			{
-				recolor.color = 0x44CC44;
+				e.target.gotoAndStop("greenNorm");
 				fuelDrainMultiplier++;
 			}
 			else
 			{
-				recolor.color = 0xCC4444;
+				e.target.gotoAndStop("redNorm");
 				fuelDrainMultiplier--;
 			}
+		}
+		
+		public function onLight(e:MouseEvent):void
+		{
+			lights[e.target.ind] = true;
+			fuelDrainMultiplier++;
 			
-			cg.shutters[e.target.shutterInd].transform.colorTransform = recolor;
+			e.target.gotoAndStop("lightOn");
+		}
+		
+		public function mouseUp(e:MouseEvent):void
+		{
+			var len:uint = lights.length;
+			
+			for (var i:uint = 0; i < len; i++)
+			{
+				if (lights[i])
+					fuelDrainMultiplier--;
+				lights[i] = false;
+				cg.lights[i].gotoAndStop("lightOff");
+			}
 		}
 		
 		/**

@@ -1,6 +1,7 @@
 ﻿package cobaltric
 {	
 	import core.Controller;
+	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -15,12 +16,12 @@
 	{
 		private var controller:Controller;
 		
-		// temporary output values
-		private var tf_fuel:TextField;
-		private var tf_load:TextField;
+		// temporary output
+		private var outputter:DebugOutputter;
 		
-		// temporary status values
+		// actual MovieClips instances
 		public var shutters:Array;
+		public var lights:Array;
 		
 		public function ContainerGame()
 		{
@@ -34,46 +35,41 @@
 			
 			controller = new Controller(this);
 			
-			var tf_main:TextField = new TextField();
-			tf_main.text = "Hello!";
+			outputter = new DebugOutputter();
+			addChild(outputter);
+			outputter.x = 320;
+			outputter.y = 240;
 			
-			addChild(tf_main);
-			tf_main.x = 350;
-			tf_main.y = 50;
+			var mc:MovieClip;
+			var i:uint;
 			
-			tf_fuel = new TextField();
-			tf_fuel.text = "100%";
-			addChild(tf_fuel);
-			tf_fuel.x = 10;
-			tf_fuel.y = 425;
-			
-			tf_load = new TextField();
-			tf_load.text = "1x";
-			addChild(tf_load);
-			tf_load.x = 10;
-			tf_load.y = 450;
-			
-			shutters = [];
-			for (var i:uint = 0; i < 2; i++)
+			shutters = [outputter.btn_doorL, outputter.btn_doorR];
+			for (i = 0; i < 2; i++)
 			{
-				var mc:MovieClip = new MovieClip();
-				mc.shutterInd = i;
-				mc.graphics.beginFill(0xCC4444);
-				mc.graphics.drawRect(100 + i * 350, 170, 50, 100);
-				mc.graphics.endFill();
-				shutters.push(mc);
-				addChild(mc);
-				
+				mc = shutters[i];	
+				mc.ind = i;			
+				shutters.push(mc);				
 				mc.addEventListener(MouseEvent.CLICK, controller.onShutter);
 			}
+			
+			lights = [outputter.btn_lightL, outputter.btn_lightR];
+			for (i = 0; i < 2; i++)
+			{
+				mc = lights[i];
+				mc.ind = i;
+				lights.push(mc);
+				mc.addEventListener(MouseEvent.MOUSE_DOWN, controller.onLight);
+			}
+			
+			stage.addEventListener(MouseEvent.MOUSE_UP, controller.mouseUp);
 		}
 		
 		override public function step():Boolean
 		{
 			controller.step();
 			
-			tf_fuel.text = "Fuel: " + controller.fuel.toFixed(2) + "%";
-			tf_load.text = "Load: " + controller.fuelDrainMultiplier + "x";
+			outputter.tf_fuel.text = "Fuel: " + controller.fuel.toFixed(01) + "%";
+			outputter.tf_usage.text = "Load: " + controller.fuelDrainMultiplier + "x";
 			return false;
 		}
 	}

@@ -35,6 +35,9 @@
       <path-element>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
+    <include-libraries>
+      <library>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src\DebugOutputter.swc</library>
+    </include-libraries>
   </compiler>
   <file-specs>
     <path-element>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src\Main.as</path-element>
