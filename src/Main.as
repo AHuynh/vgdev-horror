@@ -8,7 +8,8 @@ package
 	 * ...
 	 * @author Alexander Huynh
 	 */
-	[Frame(factoryClass="Preloader")]
+	[Frame(factoryClass = "Preloader")]
+	[SWF(width="640", height="480", backgroundColor="#EAEAEA", frameRate="30")]
 	public class Main extends Sprite 
 	{
 		public function Main():void 
