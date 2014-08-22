@@ -74,7 +74,7 @@ package core
 			lights = makeArr(2);
 			
 			// setup enemies
-			enemies = [new Manny(this, 0, 6)];
+			enemies = [new Manny(this, 0, 1)];
 		}
 		
 		private function makeArr(size:uint):Array
@@ -158,7 +158,7 @@ package core
 			cameraCurrent.gotoAndStop("on");
 			
 			cg.outputter.monitor.visible = true;
-			cg.outputter.monitor.rooms.gotoAndStop(cameraCurrentString);
+			cg.outputter.monitor.rooms.gotoAndStop(cameraCurrentString + "_main");
 			cg.outputter.monitor.tf_name.text = cg.outputter.monitor.rooms.roomName;
 		}
 

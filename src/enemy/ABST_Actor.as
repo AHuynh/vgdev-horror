@@ -62,5 +62,10 @@ package enemy
 		{  
 			return (Math.random() * (max - min + 1)) + min;  
 		} 
+		
+		protected function getChoice(arr:Array):String
+		{
+			return arr[int(Math.random() * arr.length)];
+		}
 	}
 }
