@@ -112,17 +112,25 @@ package core
 		
 		public function onShutter(e:MouseEvent):void
 		{
+			if (cg.shutters[e.target.ind].currentLabel != "closed" &&
+				cg.shutters[e.target.ind].currentLabel != "opened")
+				return;
+			
 			shutters[e.target.ind] = !shutters[e.target.ind];
 			
 			if (shutters[e.target.ind])
 			{
 				e.target.gotoAndStop("greenNorm");
 				fuelDrainMultiplier++;
+				
+				cg.shutters[e.target.ind].gotoAndPlay("close");
 			}
 			else
 			{
 				e.target.gotoAndStop("redNorm");
 				fuelDrainMultiplier--;
+				
+				cg.shutters[e.target.ind].gotoAndPlay("open");
 			}
 		}
 		

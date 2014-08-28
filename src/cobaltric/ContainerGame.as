@@ -22,10 +22,11 @@
 		public var overlayDark:OverlayDark;
 		
 		// actual MovieClip instances
-		public var shutters:Array;
-		public var lights:Array;
-		public var cameras:Array;
-		public var camerasMap:Object;
+		public var doors:Array;			// door buttons
+		public var shutters:Array;		// shutters
+		public var lights:Array;		// light buttons
+		public var cameras:Array;		// camera buttons
+		public var camerasMap:Object;	// string -> camera MC
 		
 		public function ContainerGame()
 		{
@@ -66,12 +67,12 @@
 			var mc:MovieClip;
 			var i:uint;
 			
-			shutters = [office.btn_doorL, office.btn_doorR];
+			doors = [office.btn_doorL, office.btn_doorR];
 			for (i = 0; i < 2; i++)
 			{
-				mc = shutters[i];	
+				mc = doors[i];	
 				mc.ind = i;			
-				shutters.push(mc);				
+				doors.push(mc);				
 				mc.addEventListener(MouseEvent.CLICK, controller.onShutter);
 			}
 			
@@ -96,11 +97,10 @@
 				camerasMap[keys[i]] = cameras[i];
 			}
 			
+			shutters = [office.shutterL, office.shutterR];
 			
 			overlayCamera.btn_camOff.addEventListener(MouseEvent.MOUSE_DOWN, controller.onCameraOff);
-			
 			office.mc_camera.addEventListener(MouseEvent.CLICK, controller.onCameraMain);
-			
 			
 			stage.addEventListener(MouseEvent.MOUSE_UP, controller.mouseUp);
 		}

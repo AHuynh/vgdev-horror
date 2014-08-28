@@ -53,9 +53,9 @@
   <!-- SWC Libraries -->
   <libraryPaths>
     <element path="src\OverlayCamera.swc" />
-    <element path="src\Office.swc" />
     <element path="src\MaskAll.swc" />
     <element path="src\OverlayDark.swc" />
+    <element path="src\Office.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
