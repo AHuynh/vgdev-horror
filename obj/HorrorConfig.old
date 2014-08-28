@@ -16,7 +16,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'8/22/2014'</value>
+      <value>'8/28/2014'</value>
     </define>
     <define append="true">
       <name>CONFIG::air</name>
@@ -36,7 +36,10 @@
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
-      <path-element>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src\DebugOutputter.swc</path-element>
+      <path-element>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src\OverlayCamera.swc</path-element>
+      <path-element>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src\OverlayDark.swc</path-element>
+      <path-element>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src\Office.swc</path-element>
+      <path-element>C:\Users\Alex\Documents\aaGeorgia Tech\5 Fall 14\VG Dev\Horror\src\MaskAll.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>

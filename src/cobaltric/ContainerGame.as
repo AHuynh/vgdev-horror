@@ -16,10 +16,12 @@
 	{
 		private var controller:Controller;
 		
-		// temporary output
-		public var outputter:DebugOutputter;
+		// base MovieClips
+		public var office:Office;					// primary view
+		public var overlayCamera:OverlayCamera;		// cameras
+		public var overlayDark:OverlayDark;
 		
-		// actual MovieClips instances
+		// actual MovieClip instances
 		public var shutters:Array;
 		public var lights:Array;
 		public var cameras:Array;
@@ -37,15 +39,34 @@
 			
 			controller = new Controller(this);
 			
-			outputter = new DebugOutputter();
-			addChild(outputter);
-			outputter.x = 320;
-			outputter.y = 240;
+			office = new Office();
+			addChild(office);
+			office.x = 400;
+			office.y = 300;
+			
+			overlayDark = new OverlayDark();
+			addChild(overlayDark);
+			overlayDark.x = 400;
+			overlayDark.y = 300;
+			overlayDark.buttonMode = false;
+			overlayDark.mouseEnabled = false;
+			
+			overlayCamera = new OverlayCamera();
+			addChild(overlayCamera);
+			overlayCamera.x = 400;
+			overlayCamera.y = 300;
+			overlayCamera.visible = false;
+			overlayCamera.cam_1a.gotoAndStop("1a_main");
+			
+			var maskAll:MaskAll = new MaskAll();
+			addChild(maskAll);
+			maskAll.x = 400;
+			maskAll.y = 300;
 			
 			var mc:MovieClip;
 			var i:uint;
 			
-			shutters = [outputter.btn_doorL, outputter.btn_doorR];
+			shutters = [office.btn_doorL, office.btn_doorR];
 			for (i = 0; i < 2; i++)
 			{
 				mc = shutters[i];	
@@ -54,7 +75,7 @@
 				mc.addEventListener(MouseEvent.CLICK, controller.onShutter);
 			}
 			
-			lights = [outputter.btn_lightL, outputter.btn_lightR];
+			lights = [office.btn_lightL, office.btn_lightR];
 			for (i = 0; i < 2; i++)
 			{
 				mc = lights[i];
@@ -63,10 +84,10 @@
 				mc.addEventListener(MouseEvent.MOUSE_DOWN, controller.onLight);
 			}
 			
-			cameras = [outputter.cam_1a, outputter.cam_1b, outputter.cam_2, outputter.cam_3,
-					   outputter.cam_4, outputter.cam_5, outputter.cam_6, outputter.cam_7a,
-					   outputter.cam_7b, outputter.cam_8a, outputter.cam_8b, outputter.cam_9,
-					   outputter.cam_10];
+			cameras = [overlayCamera.cam_1a, overlayCamera.cam_1b, overlayCamera.cam_2, overlayCamera.cam_3,
+					   overlayCamera.cam_4, overlayCamera.cam_5, overlayCamera.cam_6, overlayCamera.cam_7a,
+					   overlayCamera.cam_7b, overlayCamera.cam_8a, overlayCamera.cam_8b, overlayCamera.cam_9,
+					   overlayCamera.cam_10];
 			camerasMap = new Object();
 			var keys:Array = ["1a", "1b", "2", "3", "4", "5", "6", "7a", "7b", "8a", "8b", "9", "10"];
 			for (i = 0; i < cameras.length; i++)
@@ -75,9 +96,12 @@
 				camerasMap[keys[i]] = cameras[i];
 			}
 			
-			outputter.monitor.visible = false;
 			
-			outputter.btn_camOff.addEventListener(MouseEvent.MOUSE_DOWN, controller.onCameraOff);
+			overlayCamera.btn_camOff.addEventListener(MouseEvent.MOUSE_DOWN, controller.onCameraOff);
+			
+			office.mc_camera.addEventListener(MouseEvent.CLICK, controller.onCameraMain);
+			
+			
 			stage.addEventListener(MouseEvent.MOUSE_UP, controller.mouseUp);
 		}
 		
@@ -85,8 +109,8 @@
 		{
 			controller.step();
 			
-			outputter.tf_fuel.text = "Fuel: " + controller.fuel.toFixed(01) + "%";
-			outputter.tf_usage.text = "Load: " + controller.fuelDrainMultiplier + "x";
+			office.mc_displayPower.tf_fuel.text = "Fuel: " + controller.fuel.toFixed(0) + "%";
+			office.mc_displayPower.tf_usage.text = "Load: " + controller.fuelDrainMultiplier + "x";
 			return false;
 		}
 	}

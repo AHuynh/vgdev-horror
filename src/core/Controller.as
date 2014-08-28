@@ -16,6 +16,8 @@ package core
 		public var roomMap:Object;					// map of camera numbers to boolean arrays of length 4
 		private const NUM_ENEMIES:uint = 3;
 		
+		private var camMoveRate:Number = 14;				// pixels per frame to move the camera
+		
 		// fuel usage
 		public var fuel:Number;						// current generator fuel level
 		public var fuelDrainRate:Number;			// base drain per step
@@ -66,6 +68,10 @@ package core
 			fuelDrainRate = 0.007;
 			fuelDrainMultiplier = 1;
 			fuelDrainMultiplierLimit = 5;
+			
+			// setup camera
+			/*cameraCurrentString = "1a";
+			cameraCurrent = cg.overlayCamera.cam_1a;*/
 
 			// setup shutters
 			shutters = makeArr(2);
@@ -91,6 +97,7 @@ package core
 			for (var i:uint = 0; i < len; i++)
 				enemies[i].step();
 			updateFuel();
+			updateCamera();
 		}
 		
 		public function moveRoom(index:uint, roomCurr:String, roomNew:String):void
@@ -99,8 +106,8 @@ package core
 			roomMap[roomNew][index] = true;
 			
 			// TODO update visuals
-			cg.outputter.locator0.x = cg.camerasMap[roomNew].x;
-			cg.outputter.locator0.y = cg.camerasMap[roomNew].y;
+			cg.overlayCamera.locator0.x = cg.camerasMap[roomNew].x;
+			cg.overlayCamera.locator0.y = cg.camerasMap[roomNew].y;
 		}
 		
 		public function onShutter(e:MouseEvent):void
@@ -141,6 +148,11 @@ package core
 				cg.lights[i].gotoAndStop("lightOff");
 			}
 		}
+		
+		public function onCameraMain(e:MouseEvent):void
+		{
+			cg.overlayCamera.visible = true;
+		}
 
 		public function onCamera(e:MouseEvent):void
 		{			
@@ -156,10 +168,9 @@ package core
 			cameraCurrent = MovieClip(e.target);
 			cameraCurrentString = cameraCurrent.name.substring(4);		// format is cam_XX
 			cameraCurrent.gotoAndStop("on");
-			
-			cg.outputter.monitor.visible = true;
-			cg.outputter.monitor.rooms.gotoAndStop(cameraCurrentString + "_main");
-			cg.outputter.monitor.tf_name.text = cg.outputter.monitor.rooms.roomName;
+
+			cg.overlayCamera.rooms.gotoAndStop(cameraCurrentString + "_main");
+			cg.overlayCamera.tf_name.text = cg.overlayCamera.rooms.roomName;
 		}
 
 		public function onCameraOff(e:MouseEvent):void
@@ -172,7 +183,7 @@ package core
 			cameraCurrent = null;
 			cameraCurrentString = null;
 			
-			cg.outputter.monitor.visible = false;
+			cg.overlayCamera.visible = false;
 		}
 		
 		/**
@@ -189,6 +200,22 @@ package core
 				return true;
 			}
 			return false;
+		}
+		
+		private function updateCamera():void
+		{
+			if (cg.mouseX > 700)
+			{
+				cg.office.x -= camMoveRate;
+				if (cg.office.x < 300)
+					cg.office.x = 300;
+			}
+			else if (cg.mouseX < 100)
+			{
+				cg.office.x += camMoveRate;
+				if (cg.office.x > 500)
+					cg.office.x = 500;
+			}
 		}
 	}
 }
