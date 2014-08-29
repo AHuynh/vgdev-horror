@@ -5,6 +5,8 @@ package core
 	import enemy.Manny;
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
+	import taskevents.TaskEvent;
+	import taskevents.TaskServerEject;
 	
 	/**
 	 * Controls core mechanics
@@ -12,7 +14,7 @@ package core
 	 */
 	public class Controller 
 	{
-		private var cg:ContainerGame;
+		public var cg:ContainerGame;
 		public var roomMap:Object;					// map of camera numbers to boolean arrays of length 4
 		private const NUM_ENEMIES:uint = 3;
 		
@@ -23,6 +25,12 @@ package core
 		public var fuelDrainRate:Number;			// base drain per step
 		public var fuelDrainMultiplier:int;			// usage multiplier
 		public var fuelDrainMultiplierLimit:int;	// max usage multiplier (min is 1)
+		
+		// task progress
+		public var task:Number;						// current task progress
+		public var taskWorkRate:Number;				// base progress per step
+		public var taskGoal:Number;					// when task is 100% complete
+		public var taskCompleted:Boolean;
 		
 		// shutters
 		public var shutters:Array;					// boolean array indicating shutter state (T:closed, F:open)
@@ -37,6 +45,10 @@ package core
 		
 		// enemies
 		public var enemies:Array;
+		
+		// task events
+		public var taskIndex:uint;
+		public var taskEvents:Array;
 		
 		/**
 		 * Game controller requires reference to containing ContainerGame
@@ -69,6 +81,11 @@ package core
 			fuelDrainMultiplier = 1;
 			fuelDrainMultiplierLimit = 5;
 			
+			// setup task
+			task = 0;
+			taskGoal = 3600;		// 2 minutes
+			taskWorkRate = 1;		// 30 progress per sec
+			
 			// setup camera
 			/*cameraCurrentString = "1a";
 			cameraCurrent = cg.overlayCamera.cam_1a;*/
@@ -79,8 +96,14 @@ package core
 			// setup lights
 			lights = makeArr(2);
 			
+			// -- TODO put the following into something extending this controller
+			
 			// setup enemies
 			enemies = [new Manny(this, 0, 1)];
+			
+			// setup task events
+			taskIndex = 0;
+			taskEvents = [new TaskServerEject(this, 30 * 3), new TaskEvent(this, "", taskGoal + 1)];
 		}
 		
 		private function makeArr(size:uint):Array
@@ -96,10 +119,26 @@ package core
 			var len:uint = enemies.length;
 			for (var i:uint = 0; i < len; i++)
 				enemies[i].step();
+			
 			updateFuel();
 			updateCamera();
+			
+			if (!taskCompleted)
+			{
+				var taskStatus:int = taskEvents[taskIndex].fireEvent(task);
+
+				if (taskStatus == 1)
+				{
+					cg.overlayTask.tf_status.text = "System Repair Wizard running...";
+					cg.overlayTask.status.gotoAndStop(1);
+					if (++taskIndex == taskEvents.length)
+						taskCompleted = true;
+				}
+				else if (taskStatus == 0)
+					updateTask();
+			}
 		}
-		
+
 		public function moveRoom(index:uint, roomCurr:String, roomNew:String):void
 		{
 			roomMap[roomCurr][index] = false;
@@ -140,6 +179,7 @@ package core
 				fuelDrainMultiplier++;
 			
 			lights[e.target.ind] = true;
+			cg.lightCovers[e.target.ind].visible = false;
 			
 			e.target.gotoAndStop("lightOn");
 		}
@@ -154,6 +194,7 @@ package core
 					fuelDrainMultiplier--;
 				lights[i] = false;
 				cg.lights[i].gotoAndStop("lightOff");
+				cg.lightCovers[i].visible = true;
 			}
 		}
 		
@@ -170,7 +211,7 @@ package core
 			}
 			else
 			{
-				fuelDrainMultiplier++;
+				//fuelDrainMultiplier++;
 			}
 	
 			cameraCurrent = MovieClip(e.target);
@@ -186,12 +227,22 @@ package core
 			if (cameraCurrent)
 			{
 				cameraCurrent.gotoAndStop("off");
-				fuelDrainMultiplier--;
+				//fuelDrainMultiplier--;
 			}
-			cameraCurrent = null;
-			cameraCurrentString = null;
+			//cameraCurrent = null;
+			//cameraCurrentString = null;
 			
 			cg.overlayCamera.visible = false;
+		}
+		
+		public function onTask(e:MouseEvent):void
+		{									
+			cg.overlayTask.visible = true;
+		}
+		
+		public function onTaskOff(e:MouseEvent):void
+		{									
+			cg.overlayTask.visible = false;
 		}
 		
 		/**
@@ -204,7 +255,18 @@ package core
 			fuel -= fuelDrainRate * fuelDrainMultiplier;
 			if (fuel <= 0)
 			{
-				fuel = 0
+				fuel = 0;
+				return true;
+			}
+			return false;
+		}
+		
+		private function updateTask():Boolean
+		{
+			task += taskWorkRate;
+			if (task >= taskGoal)
+			{
+				task = taskGoal;
 				return true;
 			}
 			return false;
@@ -212,6 +274,9 @@ package core
 		
 		private function updateCamera():void
 		{
+			if (!cg.office.visible)
+				return;
+			
 			if (cg.mouseX > 700)
 			{
 				cg.office.x -= camMoveRate;
