@@ -1,6 +1,6 @@
 vgdev-horror
 ============
 
-A horror Flash game for VGDev, Fall 2014
+A scrapped horror Flash game intended for VGDev, Fall 2014.
 
 Based off of `Five Nights at Freddy's`.
